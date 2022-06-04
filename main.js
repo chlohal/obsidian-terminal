@@ -1,11 +1,13 @@
 const { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, Platform, ItemView, WorkspaceLeaf } = require("obsidian");
 
+const process = require("process");
+
 const child_process = require("child_process");
 
 const VIEW_TYPE_NAME = "terminal";
 
 const DEFAULT_SETTINGS = {
-    mySetting: 'default'
+    terminalCommand: process.platform == "win32" ? "powershell" : "bash -i"
 }
 
 
@@ -14,9 +16,6 @@ module.exports = class ObsidianTerminalPlugin extends Plugin {
 
     async onload() {
         await this.loadSettings();
-
-        
-        console.log(this.app.vault.getRoot().path);
 
         // This adds a simple command that can be triggered anywhere
         this.addCommand({
@@ -27,7 +26,11 @@ module.exports = class ObsidianTerminalPlugin extends Plugin {
             }
         });
 
-        this.registerView(VIEW_TYPE_NAME, terminal);
+        this.registerView(VIEW_TYPE_NAME, l=>{
+            let term = new TerminalView(l);
+            term.giveSettings(this.settings);
+            return term;
+        });
 
         // This adds a settings tab so the user can configure various aspects of the plugin
         this.addSettingTab(new SampleSettingTab(this.app, this));
@@ -83,14 +86,14 @@ class SampleSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Settings for my awesome plugin.' });
+        containerEl.createEl('h2', { text: 'Obsidian Terminal settings' });
 
         new Setting(containerEl)
-            .setName('Setting #1')
-            .setDesc('It\'s a secret')
+            .setName('Terminal')
+            .setDesc('The terminal command to use. Default: `powershell` on windows; `bash -i` otherwise ')
             .addText(text => text
                 .setPlaceholder('Enter your secret')
-                .setValue(this.plugin.settings.mySetting)
+                .setValue(this.plugin.settings.terminalCommand)
                 .onChange(async (value) => {
                     this.plugin.settings.mySetting = value;
                     await this.plugin.saveSettings();
@@ -98,22 +101,18 @@ class SampleSettingTab extends PluginSettingTab {
     }
 }
 
-/**
- * 
- * @param {WorkspaceLeaf} leaf 
- */
-function terminal(leaf) {
-    let tv = new TerminalView(leaf);
-    return tv;
-}
 
 
 class TerminalView extends ItemView {
     constructor(leaf) {
         super(leaf);
     }
-
+    settings;
     terminal;
+
+    giveSettings(settings) {
+        this.settings = settings;
+    }
 
     getIcon() { return "code-glyph" }
     getViewType() { return VIEW_TYPE_NAME; }
@@ -124,13 +123,12 @@ class TerminalView extends ItemView {
         let content = this.contentEl;
 
         let vaultPath = getVaultPath(this.app.vault);
+        let shell = this.settings.terminalCommand;
 
         sizeUpContent(content);
-        this.terminal = attachTerminal(content, vaultPath);
+        this.terminal = attachTerminal(content, vaultPath, shell);
     }
-    async onClose() {
-        console.log(this.terminal);
-        
+    async onClose() {        
         this.terminal.kill();
     }
 }
@@ -139,8 +137,8 @@ class TerminalView extends ItemView {
  * 
  * @param {HTMLElement} parent 
  */
-function attachTerminal(parent, cwd) {
-    let shell = childShell(cwd);
+function attachTerminal(parent, cwd, shellCmd) {
+    let shell = childShell(cwd, shellCmd);
 
     let istreams = parent.createSpan();
 
@@ -153,7 +151,7 @@ function attachTerminal(parent, cwd) {
 
     shell.stdout.on("data", function(data) {
         let dock = isDockedAtBottom(parent);
-        console.log(dock);
+
         if(lastStreamOut != stdout) lastStreamOut = stdout = addTextNodeTo(istreams);
         lastStreamOut.textContent += data;
 
@@ -169,12 +167,8 @@ function attachTerminal(parent, cwd) {
     });
 
     stdin.addEventListener("beforeinput", function(e) {
-
-        console.log(e);
-
         if(e.inputType == "insertParagraph") {
             shell.stdin.write(stdin.textContent + "\n");
-            console.log(JSON.stringify(stdin.textContent + "\n"));
             stdin.textContent = "";
             e.preventDefault();
         }
@@ -208,8 +202,8 @@ function addStdin(parent) {
     return stdin;
 }
 
-function childShell(cwd) {
-    let shell = child_process.spawn("bash", ["-i"], {
+function childShell(cwd, shellCmd) {
+    let shell = child_process.exec(shellCmd, {
         cwd: cwd
     });
 
