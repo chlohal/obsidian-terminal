@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-terminal",
+	"name": "Terminal for Obsidian",
+	"version": "0.1.0",
+	"minAppVersion": "0.12.0",
+	"description": "A simple terminal panel for Obsidian",
+	"author": "Chloe",
+	"authorUrl": "https://clh.sh",
+	"isDesktopOnly": true
+}
