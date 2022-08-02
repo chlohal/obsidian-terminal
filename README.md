@@ -10,7 +10,7 @@ So I made this quick-and-dirty Obsidian Terminal :)
 
 If you have `git`, then you can clone this repository to your `.obsidian/plugins` folder.
 
-If you don't have git, then click the green "Code" button, then click "Download ZIP". Extract the `.zip` folder to the `.obsidian/plugins` folder inside your vault.
+If you don't have git, [download this .zip file](https://github.com/chlohal/obsidian-terminal/archive/refs/tags/1.0.0.zip). Extract the `.zip` folder to the `.obsidian/plugins` folder inside your vault.
 
 The folder structure should look like this:
 
