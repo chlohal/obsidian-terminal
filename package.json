@@ -1,0 +1,28 @@
+{
+  "name": "obsidian-terminal",
+  "version": "0.1.0",
+  "description": "A simple terminal panel for Obsidian",
+  "main": "main.js",
+  "dependencies": {
+    "xterm": "^4.19.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chlohal/obsidian-terminal.git"
+  },
+  "keywords": [
+    "obsidian",
+    "obsidian-plugin",
+    "terminal"
+  ],
+  "author": "chlohal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chlohal/obsidian-terminal/issues"
+  },
+  "homepage": "https://github.com/chlohal/obsidian-terminal#readme"
+}
