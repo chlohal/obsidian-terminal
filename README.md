@@ -6,7 +6,34 @@ The only shortcoming of Obsidian is its Git integrations. There's a plugin, but 
 
 So I made this quick-and-dirty Obsidian Terminal :)
 
-## 
+## Installing
+
+If you have `git`, then you can clone this repository to your `.obsidian/plugins` folder.
+
+If you don't have git, then click the green "Code" button, then click "Download ZIP". Extract the `.zip` folder to the `.obsidian/plugins` folder inside your vault.
+
+The folder structure should look like this:
+
+```
+
+<vault>
+├─ .obsidian
+│  ├─ obsidian-terminal
+│  │  ├─ main.js
+│  │  ├─ manifest.json
+│  │  ├─ versions.json
+│  │  └─ ..
+│  └ ...other plugins...
+└ ...note files...
+```
+
+After copying the files, restart Obsidian and it should work!
+
+## Tools Used
+
+**You don't need any dependencies. This section is only included to give credit to the projects that made this possible**
+
+- [xterm.js](https://github.com/xtermjs/xterm.js)
 
 ## Development
 
