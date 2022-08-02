@@ -295,7 +295,6 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
         },
         onResize: function() {
             xterm.resize(xterm.cols, calculateRowHeight(parent.clientHeight, styleSettings));
-            console.log("rows",xterm.rows);
         }
     };
 }
