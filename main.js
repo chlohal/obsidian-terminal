@@ -250,8 +250,6 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
 
     loadXtermCss();    
 
-    const height = parent.clientHeight;
-
     let xterm = new Terminal({
         convertEol: true,
         fontFamily: styleSettings.fontFamily,
@@ -259,7 +257,6 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
         lineHeight: styleSettings.lineHeight,
         allowTransparency: true,
         rendererType: "dom",
-        rows: calculateRowHeight(height, styleSettings),
         customGlyphs: true,
         theme: {
             foreground: getCssVarColor("--text-normal"),
@@ -279,6 +276,11 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
     });
     xterm.open(parent);
 
+    xterm.resize(
+        calculateCols(elem, xterm),
+        calculateRows(parent, xterm)
+    );
+
     let termStream = childShell(cwd, shellCmd);
 
     termStream.on("data", function(data) {
@@ -294,14 +296,27 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
             xterm.dispose()
         },
         onResize: function() {
-            xterm.resize(xterm.cols, calculateRowHeight(parent.clientHeight, styleSettings));
+            xterm.resize(
+                calculateCols(elem, xterm),
+                calculateRows(parent, xterm)
+            );
         }
     };
 }
 
-function calculateRowHeight(height, styleSettings) {
-    return Math.floor(height / (styleSettings.fontSize * styleSettings.lineHeight) / 2);
+function calculateRows(elem, xterm) {
+    const height = elem.clientHeight;
+    const cellHeight = xterm._core._renderService.dimensions.actualCellHeight;
+
+    return Math.floor(height / cellHeight);
 }
+function calculateCols(elem, xterm) {
+    const width = elem.clientWidth;
+    const cellWidth = xterm._core._renderService.dimensions.actualCellWidth;
+
+    return Math.floor(width / cellWidth);
+}
+
 
 function loadXtermCss() {
     const style = document.createElement("style");
