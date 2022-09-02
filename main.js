@@ -250,8 +250,6 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
 
     loadXtermCss();    
 
-    const height = parent.clientHeight;
-
     let xterm = new Terminal({
         convertEol: true,
         fontFamily: styleSettings.fontFamily,
@@ -259,7 +257,6 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
         lineHeight: styleSettings.lineHeight,
         allowTransparency: true,
         rendererType: "dom",
-        rows: calculateRowHeight(height, styleSettings),
         customGlyphs: true,
         theme: {
             foreground: getCssVarColor("--text-normal"),
@@ -279,6 +276,11 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
     });
     xterm.open(parent);
 
+    xterm.resize(
+        calculateCols(elem, xterm),
+        calculateRows(parent, xterm)
+    );
+
     let termStream = childShell(cwd, shellCmd);
 
     termStream.on("data", function(data) {
@@ -297,6 +299,7 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
         kill: function() {
             xterm.dispose()
         },
+<<<<<<< HEAD
         onResize: debounce(function() {
             resizeTerminal(xterm, parent);
         })
