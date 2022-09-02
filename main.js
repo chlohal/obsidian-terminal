@@ -288,19 +288,56 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
     xterm.onData(function(data) {
         termStream.write(data);
     });
+    
+    setTimeout(function() {
+        resizeTerminal(xterm, parent);
+    }, 100);
 
     return {
         kill: function() {
             xterm.dispose()
         },
-        onResize: function() {
-            xterm.resize(xterm.cols, calculateRowHeight(parent.clientHeight, styleSettings));
-        }
+        onResize: debounce(function() {
+            resizeTerminal(xterm, parent);
+        })
     };
+}
+
+function resizeTerminal(xterm, parent) {
+    const core = xterm._core;
+    const heightPx = parent.clientHeight;
+    const widthPx = parent.clientWidth;
+    
+    const cols = Math.floor(widthPx / core._renderService.dimensions.actualCellWidth);
+    const rows = Math.floor(heightPx / core._renderService.dimensions.actualCellHeight);
+    
+    xterm.resize(cols, rows);
 }
 
 function calculateRowHeight(height, styleSettings) {
     return Math.floor(height / (styleSettings.fontSize * styleSettings.lineHeight) / 2);
+}
+
+/**
+ * @template T
+ * @param {T} fn
+ * @param {number} delay
+ * @returns {T}
+ */
+function debounce(fn, delay) {
+    if(delay === undefined) delay = 100;
+    
+    var timer;
+    
+    return function() {
+        const args = arguments;
+        const thiss = this;
+        if(timer) clearTimeout(timer);
+        
+        timer = setTimeout(function() {
+            fn.apply(this, args);
+        }, delay);
+    }
 }
 
 function loadXtermCss() {
@@ -398,6 +435,7 @@ function sizeUpContent(contentElement, styleSettings) {
         white-space: pre-wrap;
         user-select: all;
         contain: strict;
+        overflow: hidden;
         `);
     
     
