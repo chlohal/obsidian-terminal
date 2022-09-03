@@ -275,11 +275,11 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
         }
     });
     xterm.open(parent);
+    
+    setTimeout(function() {
+        resizeTerminal(xterm, parent);
+    }, 100);
 
-    xterm.resize(
-        calculateCols(elem, xterm),
-        calculateRows(parent, xterm)
-    );
 
     let termStream = childShell(cwd, shellCmd);
 
@@ -299,7 +299,6 @@ function attachTerminal(parent, cwd, shellCmd, styleSettings) {
         kill: function() {
             xterm.dispose()
         },
-<<<<<<< HEAD
         onResize: debounce(function() {
             resizeTerminal(xterm, parent);
         })

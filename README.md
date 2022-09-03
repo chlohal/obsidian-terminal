@@ -29,9 +29,13 @@ The folder structure should look like this:
 
 After copying the files, restart Obsidian and it should work!
 
+## Dependencies
+
+- NodeJS (v16 or compatible). This should be installed by Electron
+
 ## Tools Used
 
-**You don't need any dependencies. This section is only included to give credit to the projects that made this possible**
+**You don't need these as dependencies. This section is only included to give credit to the projects that made this possible**
 
 - [xterm.js](https://github.com/xtermjs/xterm.js)
 
