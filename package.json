@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/chlohal/obsidian-terminal/issues"
   },
-  "homepage": "https://github.com/chlohal/obsidian-terminal#readme"
+  "homepage": "https://github.com/chlohal/obsidian-terminal#readme",
+  "devDependencies": {
+    "@types/node": "^18.13.0"
+  }
 }
