@@ -4,10 +4,11 @@
   "description": "A simple terminal panel for Obsidian",
   "main": "main.js",
   "dependencies": {
+    "obsidian": "^1.1.1",
     "xterm": "^4.19.0"
   },
-  "devDependencies": {},
   "scripts": {
+    "dev": "esbuild src/main.ts --external:obsidian --platform=node --bundle --watch --outfile=main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
